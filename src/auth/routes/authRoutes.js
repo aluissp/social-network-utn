@@ -6,8 +6,10 @@ const router = Router();
 // router.route('/').get(authHandlers.getAuthUser).post(authHandlers.postAuthUser);
 router.route('/').get(authHandlers.getAuthUser);
 
-router.route('/register').post(authHandlers.postAuthUser);
-
 router.route('/login').post(authHandlers.userLogin);
+
+router.route('/refresh').post(authHandlers.refreshToken);
+
+router.route('/register').post(authHandlers.postAuthUser);
 
 export default router;

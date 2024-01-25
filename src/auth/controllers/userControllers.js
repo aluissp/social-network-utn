@@ -4,6 +4,18 @@ import { hashPasswordSync, comparePassword, reduceObjectByKeys } from '../../too
 
 const User = db.User;
 
+export const getUserById = async id => {
+	try {
+		const user = await User.findOne({ where: { id } });
+
+		if (!user) throw 'Missing user';
+
+		return reduceObjectByKeys(user['dataValues'], userPublicKeys);
+	} catch (error) {
+		throw error;
+	}
+};
+
 export const registerUser = async ({ name, password, email }) => {
 	try {
 		const hashedPassword = hashPasswordSync(password);

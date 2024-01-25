@@ -4,8 +4,13 @@ import { secretKey } from '../../config/constants.js';
 import { checkUserFields, userTypes } from '../helpers/index.js';
 import * as usersControllers from '../controllers/userControllers.js';
 
-export const getAuthUser = (req, res) => {
-	res.status(200).send('GET Auth router');
+export const getAuthUser = async (req, res) => {
+	const token = req.headers.authorization.split(' ')[1];
+	const { userId } = jwt.verify(token, secretKey);
+
+	const user = await usersControllers.getUserById(userId);
+
+	res.status(200).json(user);
 };
 
 export const postAuthUser = async (req, res) => {
@@ -43,4 +48,15 @@ export const userLogin = async (req, res) => {
 	const token = jwt.sign({ userId: user.id }, secretKey, { expiresIn: '1h' });
 
 	res.status(200).json({ ...user, token, password: undefined });
+};
+
+export const refreshToken = async (req, res) => {
+	const token = req.headers.authorization.split(' ')[1];
+	const { userId } = jwt.verify(token, secretKey);
+
+	const user = await usersControllers.getUserById(userId);
+
+	const newToken = jwt.sign({ userId }, secretKey, { expiresIn: '1h' });
+
+	res.status(200).json({ ...user, token: newToken, password: undefined });
 };
