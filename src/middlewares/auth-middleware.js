@@ -1,6 +1,6 @@
 import passport from 'passport';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
-import { secretKey } from '../config/constants.js';
+import { secretKey, allowedPaths } from '../config/constants.js';
 
 const init = () => {
 	const opts = {
@@ -12,7 +12,7 @@ const init = () => {
 };
 
 const protectWithJwt = (req, res, next) => {
-	if (req.path == '/' || req.path == '/auth/login') return next();
+	if (allowedPaths.includes(req.path)) return next();
 
 	return passport.authenticate('jwt', { session: false })(req, res, next);
 };

@@ -1,18 +1,15 @@
-import * as uuid from 'uuid';
+import db from '../../models/index.js';
 import { to } from '../../tools/index.js';
 import { hashPasswordSync, comparePassword } from '../../tools/index.js';
 
-export const registerUser = async (userName, password) => {
+const User = db.User;
+
+export const registerUser = async ({ name, password, email }) => {
 	try {
-		let hashedPassword = hashPasswordSync(password);
-		const userId = uuid.v4();
-		// const newUser = new UserModel({
-		// 	userId,
-		// 	userName,
-		// 	password: hashedPassword,
-		// });
-		// await newUser.save();
-		// await teams.bootstrapTeam(userId);
+		const hashedPassword = hashPasswordSync(password);
+
+		await User.create({ name, password: hashedPassword, email });
+
 		return 'User registered';
 	} catch (err) {
 		throw err;
