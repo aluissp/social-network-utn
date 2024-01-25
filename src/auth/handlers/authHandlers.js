@@ -1,16 +1,15 @@
 import jwt from 'jsonwebtoken';
 import { to } from '../../tools/index.js';
 import { secretKey } from '../../config/constants.js';
-import { checkUserFields, userTypes } from '../helpers/index.js';
+import { checkUserFields, userTypes, getUserIdFromRequest } from '../helpers/index.js';
 import * as usersControllers from '../controllers/userControllers.js';
 
 export const getAuthUser = async (req, res) => {
-	const token = req.headers.authorization.split(' ')[1];
-	const { userId } = jwt.verify(token, secretKey);
+	const userId = getUserIdFromRequest(req);
 
 	const user = await usersControllers.getUserById(userId);
 
-	res.status(200).json(user);
+	res.status(200).json({ user, message: 'User found' });
 };
 
 export const postAuthUser = async (req, res) => {
@@ -47,16 +46,40 @@ export const userLogin = async (req, res) => {
 
 	const token = jwt.sign({ userId: user.id }, secretKey, { expiresIn: '1h' });
 
-	res.status(200).json({ ...user, token, password: undefined });
+	res.status(200).json({ ...user, token, password: undefined, message: 'User logged in' });
 };
 
 export const refreshToken = async (req, res) => {
-	const token = req.headers.authorization.split(' ')[1];
-	const { userId } = jwt.verify(token, secretKey);
+	const userId = getUserIdFromRequest(req);
 
 	const user = await usersControllers.getUserById(userId);
 
 	const newToken = jwt.sign({ userId }, secretKey, { expiresIn: '1h' });
 
 	res.status(200).json({ ...user, token: newToken, password: undefined });
+};
+
+export const updateUser = async (req, res) => {
+	const [errMessage] = await to(checkUserFields(req, userTypes.update));
+
+	if (errMessage) return res.status(400).json({ message: errMessage });
+
+	const userId = getUserIdFromRequest(req);
+
+	const user = await usersControllers.getUserById(userId);
+
+	const { name, email, password } = req.body;
+
+	const updatedUser = {
+		id: userId,
+		name: name || user.name,
+		email: email || user.email,
+		password: password,
+	};
+
+	const [err, result] = await to(usersControllers.updateUser(updatedUser));
+
+	if (err || !result) return res.status(401).json({ message: 'Invalid data' });
+
+	res.status(200).json({ message: 'User updated' });
 };

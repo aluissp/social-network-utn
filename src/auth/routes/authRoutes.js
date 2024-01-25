@@ -3,10 +3,11 @@ import * as authHandlers from '../handlers/index.js';
 
 const router = Router();
 
-// router.route('/').get(authHandlers.getAuthUser).post(authHandlers.postAuthUser);
 router.route('/').get(authHandlers.getAuthUser);
 
 router.route('/login').post(authHandlers.userLogin);
+
+router.route('/update').put(authHandlers.updateUser);
 
 router.route('/refresh').post(authHandlers.refreshToken);
 

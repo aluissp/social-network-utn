@@ -45,3 +45,21 @@ export const checkUserCredentials = async ({ email, password }) => {
 		throw err;
 	}
 };
+
+export const updateUser = async ({ id, name, password, email }) => {
+	try {
+		const newUser = { id };
+
+		if (name) newUser.name = name;
+
+		if (password) newUser.password = hashPasswordSync(password);
+
+		if (email) newUser.email = email;
+
+		await User.update(newUser, { where: { id } });
+
+		return 'User updated';
+	} catch (err) {
+		throw err;
+	}
+};
