@@ -5,7 +5,7 @@ import { checkUserFields, userTypes } from '../helpers/index.js';
 import * as usersControllers from '../controllers/userControllers.js';
 
 export const getAuthUser = (req, res) => {
-	res.status(200).send('GET Auth router.');
+	res.status(200).send('GET Auth router');
 };
 
 export const postAuthUser = async (req, res) => {
@@ -21,27 +21,26 @@ export const postAuthUser = async (req, res) => {
 
 	const [err, result] = await to(usersControllers.registerUser(newUser));
 
-	if (err || !result) return res.status(401).json({ message: 'Invalid data.' });
+	if (err || !result) return res.status(401).json({ message: 'Invalid data' });
 
-	res.status(200).json({ message: 'User registered.' });
+	res.status(200).json({ message: 'User registered' });
 };
 
 export const userLogin = async (req, res) => {
-	res.send('POST Auth userLogin() router');
-	// if (!req.body || !req.body.user || !req.body.password) {
-	// 	return res.status(400).json({ message: 'Missing data' });
-	// }
+	const [errMessage] = await to(checkUserFields(req, userTypes.login));
 
-	// const [err, result] = await to(
-	// 	usersControllers.checkUserCredentials(req.body.user, req.body.password)
-	// );
+	if (errMessage) return res.status(400).json({ message: errMessage });
 
-	// if (err || !result) {
-	// 	return res.status(401).json({ message: 'Invalid credentials.' });
-	// }
+	const userRequest = {
+		email: req.body.email,
+		password: req.body.password,
+	};
 
-	// const user = await usersControllers.getUserIdFromUserName(req.body.user);
-	// const token = jwt.sign({ userId: user.userId }, secretKey, { expiresIn: '1h' });
+	const [err, user] = await to(usersControllers.checkUserCredentials(userRequest));
 
-	// res.status(200).json({ token });
+	if (err || !user) return res.status(401).json({ message: err || 'Invalid credentials' });
+
+	const token = jwt.sign({ userId: user.id }, secretKey, { expiresIn: '1h' });
+
+	res.status(200).json({ ...user, token, password: undefined });
 };

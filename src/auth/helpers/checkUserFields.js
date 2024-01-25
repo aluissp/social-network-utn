@@ -15,5 +15,11 @@ export const checkUserFields = async ({ body }, type) => {
 		if (!validator.isEmail(email)) throw 'Invalid email.';
 	}
 
+	if (type === userTypes.login) {
+		const { email, password } = body;
+
+		if (!email || !password) throw 'Missing data.';
+	}
+
 	return 'User fields checked';
 };

@@ -1,6 +1,6 @@
 import db from '../../models/index.js';
-import { to } from '../../tools/index.js';
-import { hashPasswordSync, comparePassword } from '../../tools/index.js';
+import { userPublicKeys } from '../helpers/index.js';
+import { hashPasswordSync, comparePassword, reduceObjectByKeys } from '../../tools/index.js';
 
 const User = db.User;
 
@@ -16,45 +16,19 @@ export const registerUser = async ({ name, password, email }) => {
 	}
 };
 
-export const checkUserCredentials = async (userName, password) => {
+export const checkUserCredentials = async ({ email, password }) => {
 	try {
-		// const user = await getUserIdFromUserName(userName);
+		const user = await User.findOne({ where: { email } });
 
-		// if (!user) throw 'Missing user';
+		if (!user) throw 'Missing user';
 
-		return 'User credentials checked';
+		comparePassword(password, user.password, (err, result) => {
+			if (err) throw err;
 
-		// comparePassword(password, user.password, (err, result) => {
-		// 	if (err) {
-		// 		reject(err);
-		// 	} else {
-		// 		resolve(result);
-		// 	}
-		// });
-	} catch (err) {
-		throw err;
-	}
-};
+			if (!result) throw 'Invalid credentials';
+		});
 
-export const getUserIdFromUserName = async userName => {
-	try {
-		// let [err, result] = await to(UserModel.findOne({ userName }).exec());
-		// if (err) return reject(err);
-		// resolve(result);
-		return 'User id from username';
-	} catch (err) {
-		throw err;
-	}
-};
-
-export const getUser = async userId => {
-	try {
-		return 'aluissp';
-		// let [err, result] = await to(UserModel.findOne({ userId }).exec());
-
-		// if (err) throw err;
-
-		// return result;
+		return reduceObjectByKeys(user['dataValues'], userPublicKeys);
 	} catch (err) {
 		throw err;
 	}
