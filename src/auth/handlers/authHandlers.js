@@ -7,9 +7,9 @@ import * as usersControllers from '../controllers/userControllers.js';
 export const getAuthUser = async (req, res) => {
 	const userId = getUserIdFromRequest(req);
 
-	const user = await usersControllers.getUserById(userId);
+	const user = await usersControllers.getUserAndProfileById(userId);
 
-	res.status(200).json({ user, message: 'User found' });
+	res.status(200).json({ ...user, message: 'User found' });
 };
 
 export const postAuthUser = async (req, res) => {
@@ -33,7 +33,6 @@ export const postAuthUser = async (req, res) => {
 	if (err || !user) return res.status(401).json({ message: 'Invalid data' });
 
 	const [errProfile, profile] = await to(usersControllers.registerProfile(newProfile, user.id));
-	console.log(errProfile, profile);
 
 	if (errProfile || !profile) return res.status(401).json({ message: 'Could not create profile' });
 
@@ -54,19 +53,23 @@ export const userLogin = async (req, res) => {
 
 	if (err || !user) return res.status(401).json({ message: err || 'Invalid credentials' });
 
-	const token = jwt.sign({ userId: user.id }, secretKey, { expiresIn: '1h' });
+	const [errProfile, { profile }] = await to(usersControllers.getUserAndProfileById(user.id));
 
-	res.status(200).json({ ...user, token, password: undefined, message: 'User logged in' });
+	if (errProfile || !profile) return res.status(401).json({ message: 'Missing profile' });
+
+	const token = jwt.sign({ userId: user.id }, secretKey, { expiresIn: '12h' });
+
+	res.status(200).json({ user, profile, token, message: 'User logged in' });
 };
 
 export const refreshToken = async (req, res) => {
 	const userId = getUserIdFromRequest(req);
 
-	const user = await usersControllers.getUserById(userId);
+	const user = await usersControllers.getUserAndProfileById(userId);
 
-	const newToken = jwt.sign({ userId }, secretKey, { expiresIn: '1h' });
+	const newToken = jwt.sign({ userId }, secretKey, { expiresIn: '12h' });
 
-	res.status(200).json({ ...user, token: newToken, password: undefined });
+	res.status(200).json({ ...user, token: newToken });
 };
 
 export const updateUser = async (req, res) => {
@@ -76,9 +79,9 @@ export const updateUser = async (req, res) => {
 
 	const userId = getUserIdFromRequest(req);
 
-	const user = await usersControllers.getUserById(userId);
+	const { user, profile } = await usersControllers.getUserAndProfileById(userId);
 
-	const { name, email, password } = req.body;
+	const { name, email, password, username, faculty, profileLink } = req.body;
 
 	const updatedUser = {
 		id: userId,
@@ -87,9 +90,21 @@ export const updateUser = async (req, res) => {
 		password: password,
 	};
 
+	const updatedProfile = {
+		id: profile.id,
+		username: username || profile.username,
+		faculty: faculty || profile.faculty,
+		profileLink: profileLink || profile.profileLink,
+	};
+
 	const [err, result] = await to(usersControllers.updateUser(updatedUser));
 
 	if (err || !result) return res.status(401).json({ message: 'Invalid data' });
+
+	const [errProfile, resultProfile] = await to(usersControllers.updateProfile(updatedProfile));
+
+	if (errProfile || !resultProfile)
+		return res.status(401).json({ message: 'Could not update profile' });
 
 	res.status(200).json({ message: 'User updated' });
 };

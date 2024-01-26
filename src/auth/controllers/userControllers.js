@@ -3,14 +3,20 @@ import { userPublicKeys, profilePublicKeys } from '../helpers/index.js';
 import { hashPasswordSync, comparePassword, reduceObjectByKeys } from '../../tools/index.js';
 
 const User = db.User;
+const Profile = db.Profile;
 
-export const getUserById = async id => {
+export const getUserAndProfileById = async id => {
 	try {
 		const user = await User.findOne({ where: { id } });
 
 		if (!user) throw 'Missing user';
 
-		return reduceObjectByKeys(user['dataValues'], userPublicKeys);
+		const profile = await user.getProfile();
+
+		return {
+			user: reduceObjectByKeys(user['dataValues'], userPublicKeys),
+			profile: reduceObjectByKeys(profile['dataValues'], profilePublicKeys),
+		};
 	} catch (error) {
 		throw error;
 	}
@@ -77,4 +83,22 @@ export const registerProfile = async ({ username, faculty }, userId) => {
 	} catch (err) {
 		throw err;
 	}
+};
+
+export const updateProfile = async ({ id, username, faculty, profileLink }) => {
+	const profile = await Profile.findOne({ where: { id } });
+
+	if (!profile) throw 'Missing profile';
+
+	const newProfile = { id };
+
+	if (username) newProfile.username = username;
+
+	if (faculty) newProfile.faculty = faculty;
+
+	if (profileLink) newProfile.profileLink = profileLink;
+
+	await Profile.update(newProfile, { where: { id } });
+
+	return 'Profile updated';
 };

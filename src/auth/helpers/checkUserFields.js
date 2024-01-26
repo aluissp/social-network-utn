@@ -22,9 +22,7 @@ export const checkUserFields = async ({ body }, type) => {
 	}
 
 	if (type === userTypes.update) {
-		const { name, password, email } = body;
-
-		if (!name && !password && !email) throw 'Missing data';
+		const { password, email } = body;
 
 		if (password && !validator.isLength(password, { min: 8 }))
 			throw 'Password must be at least 8 characters long';
