@@ -23,11 +23,21 @@ export const postAuthUser = async (req, res) => {
 		email: req.body.email,
 	};
 
-	const [err, result] = await to(usersControllers.registerUser(newUser));
+	const newProfile = {
+		username: req.body.username,
+		faculty: req.body.faculty,
+	};
 
-	if (err || !result) return res.status(401).json({ message: 'Invalid data' });
+	const [err, user] = await to(usersControllers.registerUser(newUser));
 
-	res.status(200).json({ message: 'User registered' });
+	if (err || !user) return res.status(401).json({ message: 'Invalid data' });
+
+	const [errProfile, profile] = await to(usersControllers.registerProfile(newProfile, user.id));
+	console.log(errProfile, profile);
+
+	if (errProfile || !profile) return res.status(401).json({ message: 'Could not create profile' });
+
+	res.status(200).json({ user, profile, message: 'User registered' });
 };
 
 export const userLogin = async (req, res) => {

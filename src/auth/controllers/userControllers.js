@@ -1,5 +1,5 @@
 import db from '../../models/index.js';
-import { userPublicKeys } from '../helpers/index.js';
+import { userPublicKeys, profilePublicKeys } from '../helpers/index.js';
 import { hashPasswordSync, comparePassword, reduceObjectByKeys } from '../../tools/index.js';
 
 const User = db.User;
@@ -20,9 +20,9 @@ export const registerUser = async ({ name, password, email }) => {
 	try {
 		const hashedPassword = hashPasswordSync(password);
 
-		await User.create({ name, password: hashedPassword, email });
+		const user = await User.create({ name, password: hashedPassword, email });
 
-		return 'User registered';
+		return reduceObjectByKeys(user['dataValues'], userPublicKeys);
 	} catch (err) {
 		throw err;
 	}
@@ -59,6 +59,21 @@ export const updateUser = async ({ id, name, password, email }) => {
 		await User.update(newUser, { where: { id } });
 
 		return 'User updated';
+	} catch (err) {
+		throw err;
+	}
+};
+
+// Profile
+export const registerProfile = async ({ username, faculty }, userId) => {
+	try {
+		const user = await User.findOne({ where: { id: userId } });
+
+		if (!user) throw 'Missing user';
+
+		const profile = await user.createProfile({ username, faculty });
+
+		return reduceObjectByKeys(profile['dataValues'], profilePublicKeys);
 	} catch (err) {
 		throw err;
 	}
