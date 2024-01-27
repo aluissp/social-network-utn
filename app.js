@@ -2,6 +2,7 @@ import express from 'express';
 // import _ from './src/db/database.js';
 import { setupMiddleware } from './src/middlewares/index.js';
 import authRoutes from './src/auth/routes/authRoutes.js';
+import followRoutes from './src/follow/routes/followRoutes.js';
 
 const app = express();
 const port = 3000;
@@ -14,10 +15,10 @@ app.get('/', (req, res) => {
 
 // Routes
 app.use('/auth', authRoutes);
-// app.use('/teams', teamRoutes);
+app.use('/follow', followRoutes);
 
 app.listen(port, () => {
-	console.log('Server started at port 3000.');
+	console.log(`Server started at port ${port}.`);
 });
 
 export default app;
