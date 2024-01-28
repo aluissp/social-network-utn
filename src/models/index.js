@@ -5,6 +5,8 @@ import config from '../db/config/database-postgres.js';
 import { User } from './User.js';
 import { Profile } from './Profile.js';
 import { Follows } from './Follows.js';
+import { Post } from './Post.js';
+import { Remark } from './Remark.js';
 
 const sequelize = new SequelizeConstructor(config);
 
@@ -14,6 +16,8 @@ db.Sequelize = Sequelize;
 db.User = User(sequelize, Sequelize);
 db.Profile = Profile(sequelize, Sequelize);
 db.Follows = Follows(sequelize, Sequelize);
+db.Post = Post(sequelize, Sequelize);
+db.Remark = Remark(sequelize, Sequelize);
 
 // Associations
 // Profile -> User
@@ -25,5 +29,17 @@ db.Profile.belongsToMany(db.Profile, {
 	through: db.Follows,
 	as: 'following',
 });
+
+// Profile -> Post
+db.Profile.hasMany(db.Post);
+
+// Post -> Profile
+db.Post.belongsTo(db.Profile);
+
+// Post -> Remark
+db.Post.hasMany(db.Remark);
+
+// Remark -> Post
+db.Remark.belongsTo(db.Post);
 
 export default db;
