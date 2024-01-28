@@ -5,7 +5,7 @@ import authRoutes from './src/auth/routes/authRoutes.js';
 import followRoutes from './src/follow/routes/followRoutes.js';
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 setupMiddleware(app);
 

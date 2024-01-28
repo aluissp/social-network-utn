@@ -22,6 +22,23 @@ export const getUserAndProfileById = async id => {
 	}
 };
 
+export const getAllUsersAndProfiles = async () => {
+	try {
+		const users = await User.findAll();
+
+		let response = users.map(user => user.getProfile());
+
+		response = await Promise.all(response);
+
+		return users.map((user, index) => ({
+			...reduceObjectByKeys(user['dataValues'], userPublicKeys),
+			profile: reduceObjectByKeys(response[index]['dataValues'], profilePublicKeys),
+		}));
+	} catch (error) {
+		throw error;
+	}
+};
+
 export const registerUser = async ({ name, password, email }) => {
 	try {
 		const hashedPassword = hashPasswordSync(password);

@@ -12,6 +12,12 @@ export const getAuthUser = async (req, res) => {
 	res.status(200).json({ ...user, message: 'User found' });
 };
 
+export const getAllUsers = async (req, res) => {
+	const users = await usersControllers.getAllUsersAndProfiles();
+
+	res.status(200).json({ users, message: 'All users' });
+};
+
 export const postAuthUser = async (req, res) => {
 	const [errMessage] = await to(checkUserFields(req, userTypes.register));
 
