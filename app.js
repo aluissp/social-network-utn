@@ -1,5 +1,6 @@
 import cors from 'cors';
 import express from 'express';
+import _ from './src/db/config/database-mongo.js';
 import { setupMiddleware } from './src/middlewares/index.js';
 import authRoutes from './src/auth/routes/authRoutes.js';
 import postRoutes from './src/post/routes/postRoutes.js';
