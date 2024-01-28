@@ -1,7 +1,7 @@
 import express from 'express';
-// import _ from './src/db/database.js';
 import { setupMiddleware } from './src/middlewares/index.js';
 import authRoutes from './src/auth/routes/authRoutes.js';
+import postRoutes from './src/post/routes/postRoutes.js';
 import followRoutes from './src/follow/routes/followRoutes.js';
 
 const app = express();
@@ -15,6 +15,7 @@ app.get('/', (req, res) => {
 
 // Routes
 app.use('/auth', authRoutes);
+app.use('/post', postRoutes);
 app.use('/follow', followRoutes);
 
 app.listen(port, () => {
