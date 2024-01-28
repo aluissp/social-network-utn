@@ -20,5 +20,5 @@ export const validatePostRequest = async ({ body }, type) => {
 		if (likes && !validator.isInt(String(likes))) throw new Error('Invalid likes');
 	}
 
-	return 'Follow request validated';
+	return 'Post request validated';
 };
