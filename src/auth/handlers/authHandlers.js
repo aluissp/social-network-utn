@@ -87,7 +87,7 @@ export const updateUser = async (req, res) => {
 
 	const { user, profile } = await usersControllers.getUserAndProfileById(userId);
 
-	const { name, email, password, username, faculty, profileLink } = req.body;
+	const { name, email, password, username, faculty } = req.body;
 
 	const updatedUser = {
 		id: userId,
@@ -100,7 +100,6 @@ export const updateUser = async (req, res) => {
 		id: profile.id,
 		username: username || profile.username,
 		faculty: faculty || profile.faculty,
-		profileLink: profileLink || profile.profileLink,
 	};
 
 	const [err, result] = await to(usersControllers.updateUser(updatedUser));

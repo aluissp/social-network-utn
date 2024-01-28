@@ -6,6 +6,7 @@ import authRoutes from './src/auth/routes/authRoutes.js';
 import postRoutes from './src/post/routes/postRoutes.js';
 import followRoutes from './src/follow/routes/followRoutes.js';
 import remarkRoutes from './src/remark/routes/remarkRoutes.js';
+import imageRoutes from './src/image/routes/imagesRoutes.js';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -24,6 +25,7 @@ app.use('/auth', authRoutes);
 app.use('/post', postRoutes);
 app.use('/follow', followRoutes);
 app.use('/post', remarkRoutes);
+app.use('/image', imageRoutes);
 
 app.listen(port, () => {
 	console.log(`Server started at port ${port}.`);
