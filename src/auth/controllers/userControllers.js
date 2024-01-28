@@ -102,7 +102,7 @@ export const registerProfile = async ({ username, faculty }, userId) => {
 	}
 };
 
-export const updateProfile = async ({ id, username, faculty, profileLink }) => {
+export const updateProfile = async ({ id, username, faculty }) => {
 	const profile = await Profile.findOne({ where: { id } });
 
 	if (!profile) throw 'Missing profile';
@@ -112,8 +112,6 @@ export const updateProfile = async ({ id, username, faculty, profileLink }) => {
 	if (username) newProfile.username = username;
 
 	if (faculty) newProfile.faculty = faculty;
-
-	if (profileLink) newProfile.profileLink = profileLink;
 
 	await Profile.update(newProfile, { where: { id } });
 
