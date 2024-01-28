@@ -8,6 +8,7 @@
 		"test": "NODE_ENV=test ./node_modules/.bin/mocha --timeout 4000 **/**/*.test.js",
 		"migrate": "sequelize-cli db:migrate",
 		"migrate:down": "sequelize-cli db:migrate:undo",
+		"build": "yarn && yarn migrate",
 		"watch": "nodemon app.js"
 	},
 	"author": "Luis Perugachi",
