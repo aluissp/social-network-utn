@@ -1,7 +1,8 @@
 export default {
 	username: 'postgres',
-	password: 'luis',
-	database: 'social_network_db',
-	host: '127.0.0.1',
+	password: '6DcdBCCBFF5DFd-1Cb*aFf4GCfca1d32',
+	database: 'railway',
+	port: 27558,
+	host: 'viaduct.proxy.rlwy.net',
 	dialect: 'postgres',
 };
