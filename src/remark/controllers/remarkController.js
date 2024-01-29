@@ -2,12 +2,12 @@ import db from '../../models/index.js';
 
 const { Post, Remark } = db;
 
-export const createRemark = async ({ content }, postId) => {
+export const createRemark = async ({ content }, { postId, profileId }) => {
 	const post = await Post.findOne({ where: { id: postId } });
 
 	if (!post) throw new Error('Post not found');
 
-	await Remark.create({ content, postId });
+	await Remark.create({ content, postId, profileId });
 
 	await post.reload({ include: Remark });
 
