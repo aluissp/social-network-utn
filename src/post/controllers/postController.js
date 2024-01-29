@@ -1,15 +1,20 @@
 import db from '../../models/index.js';
 
-const { Post } = db;
+const { Post, Remark } = db;
 
 export const getAllPosts = async () => {
-	const posts = await Post.findAll({ include: ['remarks', 'profile'] });
+	const posts = await Post.findAll({
+		include: [{ model: Remark, include: [{ model: db.Profile, as: 'profile' }] }, 'profile'],
+	});
 
 	return posts;
 };
 
 export const getOnePost = async ({ id }) => {
-	const posts = await Post.findOne({ where: { id }, include: ['remarks', 'profile'] });
+	const posts = await Post.findOne({
+		where: { id },
+		include: [{ model: Remark, include: [{ model: db.Profile, as: 'profile' }] }, 'profile'],
+	});
 
 	return posts;
 };

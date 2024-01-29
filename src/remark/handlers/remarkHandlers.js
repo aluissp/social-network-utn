@@ -1,15 +1,20 @@
 import { to } from '../../tools/index.js';
 import * as remarkController from '../controllers/index.js';
 import { remarkTypes, validateRemarkRequest } from '../helpers/index.js';
+import { getUserIdFromRequest } from '../../auth/helpers/index.js';
 
 export const createRemark = async (req, res) => {
 	const [errValidation] = await to(validateRemarkRequest(req, remarkTypes.createRemark));
 
 	if (errValidation) return res.status(401).send({ message: errValidation.message });
 
+	const userId = getUserIdFromRequest(req);
+
 	const { postId } = req.params;
 
-	const [err, post] = await to(remarkController.createRemark(req.body, postId));
+	const [err, post] = await to(
+		remarkController.createRemark(req.body, { postId, profileId: userId })
+	);
 
 	if (err) return res.status(401).send({ message: err.message });
 

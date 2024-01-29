@@ -18,6 +18,14 @@ module.exports = {
 				},
 				onDelete: 'CASCADE',
 			},
+			profileId: {
+				type: Sequelize.INTEGER,
+				references: {
+					model: 'profiles',
+					key: 'id',
+				},
+				onDelete: 'CASCADE',
+			},
 			createdAt: {
 				allowNull: false,
 				type: Sequelize.DATE,

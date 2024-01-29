@@ -42,4 +42,10 @@ db.Post.hasMany(db.Remark);
 // Remark -> Post
 db.Remark.belongsTo(db.Post);
 
+// Remark -> Profile
+db.Remark.belongsTo(db.Profile);
+
+// Profile -> Remark
+db.Profile.hasMany(db.Remark);
+
 export default db;
