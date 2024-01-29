@@ -3,13 +3,13 @@ import db from '../../models/index.js';
 const { Post } = db;
 
 export const getAllPosts = async () => {
-	const posts = await Post.findAll({ include: 'remarks' });
+	const posts = await Post.findAll({ include: ['remarks', 'profile'] });
 
 	return posts;
 };
 
 export const getOnePost = async ({ id }) => {
-	const posts = await Post.findOne({ where: { id }, include: 'remarks' });
+	const posts = await Post.findOne({ where: { id }, include: ['remarks', 'profile'] });
 
 	return posts;
 };
