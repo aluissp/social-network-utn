@@ -10,9 +10,6 @@ module.exports = {
 			username: {
 				type: Sequelize.STRING,
 			},
-			profileLink: {
-				type: Sequelize.STRING,
-			},
 			faculty: {
 				type: Sequelize.STRING,
 			},

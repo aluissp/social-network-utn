@@ -3,13 +3,13 @@ import db from '../../models/index.js';
 const { Post } = db;
 
 export const getAllPosts = async () => {
-	const posts = await Post.findAll({ include: 'remarks' });
+	const posts = await Post.findAll({ include: ['remarks', 'profile'] });
 
 	return posts;
 };
 
 export const getOnePost = async ({ id }) => {
-	const posts = await Post.findOne({ where: { id }, include: 'remarks' });
+	const posts = await Post.findOne({ where: { id }, include: ['remarks', 'profile'] });
 
 	return posts;
 };
@@ -26,7 +26,7 @@ export const createPost = async ({ title, description }, profileId) => {
 	return post;
 };
 
-export const updatePost = async ({ id, title, imageUrl, likes, description }, profileId) => {
+export const updatePost = async ({ id, title, likes, description }, profileId) => {
 	const post = await Post.findOne({ where: { id, profileId } });
 
 	if (!post) throw new Error('Post not found');
@@ -35,7 +35,6 @@ export const updatePost = async ({ id, title, imageUrl, likes, description }, pr
 		title: title || post.title,
 		description: description || post.description,
 		likes: likes || post.likes,
-		imageUrl: imageUrl || post.imageUrl,
 	};
 
 	await post.update(newPost);
