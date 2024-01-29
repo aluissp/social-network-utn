@@ -7,9 +7,13 @@ export const getProfileImage = async id => {
 	try {
 		const user = await UserModel.findOne({ id });
 
-		if (!user) throw new Error('You do not have a profile image');
+		if (user) return user.imageFile;
 
-		return user.imageFile;
+		const defaultImage = await UserModel.findOne({ id: 'default' });
+
+		if (!defaultImage) throw new Error('Default image not found');
+
+		return defaultImage.imageFile;
 	} catch (error) {
 		throw error;
 	}

@@ -7,9 +7,13 @@ export const getPostImage = async id => {
 	try {
 		const post = await PostModel.findOne({ id });
 
-		if (!post) throw new Error('Image not found');
+		if (post) return post.imageFile;
 
-		return post.imageFile;
+		const defaultImage = await PostModel.findOne({ id: 'default' });
+
+		if (!defaultImage) throw new Error('Default image not found');
+
+		return defaultImage.imageFile;
 	} catch (error) {
 		throw error;
 	}
